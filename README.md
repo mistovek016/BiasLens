@@ -27,4 +27,4 @@ Built with a Manifest V3 extension and a serverless edge backend:
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/mistovek016/BiasLens.git](https://github.com/mistovek016/BiasLens.git)
+   git clone https://github.com/mistovek016/BiasLens.git
