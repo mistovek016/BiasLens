@@ -1,29 +1,29 @@
-# BiasLens 🛡️
+# BiasLens
 
-BiasLens is a high-performance, privacy-first Chrome extension that acts as a real-time linguistic and rhetorical forensic tool. By leveraging Gemini flash models through a secure Cloudflare Worker proxy, BiasLens analyses highlighted web text to detect emotional manipulation, cognitive bias, and unsupported AI hallucinations instantly.
+BiasLens is a Chrome extension that analyses highlighted web text to detect emotional manipulation, cognitive bias, and AI hallucinations. It runs on Gemini Flash models routed through a Cloudflare Worker proxy.
 
-## Architecture & System Design
+## Architecture
 
-BiasLens utilizes a modern Manifest V3 extension architecture paired with a serverless edge backend:
+Built with a Manifest V3 extension and a serverless edge backend:
 
-* **Client Extension (`content.js`, `background.js`):** Intercepts user text selections, harvests local DOM context (surrounding paragraphs and page headers), and communicates securely via an asynchronous message bridge.
-* **Edge Proxy (`Cloudflare Worker`):** Acts as a secure reverse proxy holding the secret API key in encrypted environment variables. It enforces automated multi-model failover and strict CORS policies.
-* **Inference Engine (`Google Gemini API`):** Employs strict JSON schema generation (`responseSchema`) to guarantee parseable, structured analytical output with zero retry overhead.
+* **Client (`content.js`, `background.js`):** Grabs the user's text selection and local DOM context (surrounding paragraphs and headers), then passes it to the backend.
+* **Edge Proxy (Cloudflare Worker):** Acts as a reverse proxy to hide the API key. Enforces CORS policies and handles model failover.
+* **Inference (Gemini API):** Uses strict JSON schema generation (`responseSchema`) to guarantee structured, parseable output without retry overhead.
 
-## Technologies Used
+## Tech Stack
 
-* **Frontend:** Vanilla JavaScript (ES6+), CSS3, Chrome Extensions API (Manifest V3)
-* **Backend / Edge:** Cloudflare Workers (JavaScript/V8 runtime)
-* **AI / ML:** Google Gemini 3.x Flash models via Google AI Studio
+* **Frontend:** Vanilla JS, CSS, Chrome Extensions API (Manifest V3)
+* **Backend:** Cloudflare Workers
+* **AI:** Gemini Flash models
 
-## Features & Advantages
+## Features
 
-* **Context-Aware Analysis:** Evaluates text within its actual discussion thread rather than in isolation.
-* **Decoupled Scoring Metrics:** Separates rhetorical bias (emotional spin) from hallucination risk (empirical verifiability) using a quantised scoring matrix.
-* **Zero User Configuration:** Users install the extension and immediately analyse text without dealing with API keys or complex setup.
-* **Privacy-First:** No browsing data, personal identifiers, or text selections are logged, stored, or sold.
+* **Context-Aware:** Evaluates text using the surrounding page context rather than in isolation.
+* **Decoupled Scoring:** Separates rhetorical bias from hallucination risk using a quantised scoring matrix.
+* **Plug-and-Play:** Works immediately on install. Users don't need to configure their own API keys.
+* **Private:** Text selections and browsing data are not logged or stored.
 
-## Installation & Local Setup
+## Local Setup
 
 1. Clone the repository:
    ```bash
