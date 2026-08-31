@@ -1,0 +1,567 @@
+/* overlay.css - BiasLens Floating Tooltip & Trigger Overlay (Encapsulated in Shadow DOM) */
+
+:host {
+  all: initial;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #f8fafc;
+  z-index: 2147483647 !important;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Floating Trigger Pill Button */
+.biaslens-trigger-btn {
+  pointer-events: auto;
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #1e1b4b, #312e81);
+  color: #f8fafc;
+  border: 1px solid #6366f1;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 12px rgba(99, 102, 241, 0.35);
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease, background 0.15s ease;
+  user-select: none;
+  animation: biaslens-pop-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.biaslens-trigger-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 18px rgba(99, 102, 241, 0.55);
+  background: linear-gradient(135deg, #312e81, #4338ca);
+}
+
+.biaslens-trigger-btn:active {
+  transform: scale(0.96);
+}
+
+.biaslens-trigger-icon {
+  width: 14px;
+  height: 14px;
+  color: #38bdf8;
+  flex-shrink: 0;
+}
+
+/* Tooltip Container Card with Viewport Protection */
+.biaslens-tooltip {
+  pointer-events: auto;
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  width: 360px;
+  min-width: 340px;
+  max-width: 440px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  background: #0f172a;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 24px rgba(99, 102, 241, 0.2);
+  color: #f8fafc;
+  overflow: hidden;
+  animation: biaslens-pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: text;
+  overscroll-behavior: contain;
+  will-change: transform, opacity;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header */
+.biaslens-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(30, 41, 59, 0.65);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  user-select: none;
+  cursor: grab;
+  touch-action: none;
+  flex-shrink: 0;
+}
+
+.biaslens-header:active {
+  cursor: grabbing;
+}
+
+.biaslens-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.biaslens-header-logo {
+  width: 16px;
+  height: 16px;
+  color: #38bdf8;
+  flex-shrink: 0;
+}
+
+.biaslens-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: #f8fafc;
+}
+
+.biaslens-mode-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.2);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.biaslens-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.biaslens-icon-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s, transform 0.1s;
+}
+
+.biaslens-icon-btn:hover {
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.biaslens-icon-btn:active {
+  transform: scale(0.92);
+}
+
+.biaslens-icon-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Loading State */
+.biaslens-loading-body {
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  flex: 1 1 auto;
+}
+
+.biaslens-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(99, 102, 241, 0.2);
+  border-top-color: #38bdf8;
+  border-radius: 50%;
+  animation: biaslens-spin 0.75s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.biaslens-loading-text {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.biaslens-loading-pulse {
+  font-weight: 600;
+  color: #c7d2fe;
+  animation: biaslens-pulse 1.4s ease-in-out infinite;
+}
+
+/* Content Body */
+.biaslens-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 auto;
+  max-height: 480px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: biaslens-fade-in 0.25s ease-out;
+}
+
+/* Scrollbar for Tooltip Body */
+.biaslens-body::-webkit-scrollbar {
+  width: 5px;
+}
+.biaslens-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.biaslens-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* Metric Scores Dual Grid */
+.biaslens-scores-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.biaslens-score-card {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Score Card Severity Variations */
+.biaslens-score-card.tier-low {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(30, 41, 59, 0.7) 100%);
+}
+
+.biaslens-score-card.tier-med {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, rgba(30, 41, 59, 0.7) 100%);
+}
+
+.biaslens-score-card.tier-high {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.08) 0%, rgba(30, 41, 59, 0.7) 100%);
+}
+
+.biaslens-score-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.biaslens-tier-text {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.biaslens-score-val-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.biaslens-score-num {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.biaslens-score-max {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.biaslens-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.biaslens-progress-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.score-low { color: #34d399; }
+.score-low-bg {
+  background: linear-gradient(90deg, #059669, #10b981);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+.biaslens-tier-text.score-low {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.score-med { color: #fbbf24; }
+.score-med-bg {
+  background: linear-gradient(90deg, #d97706, #f59e0b);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+.biaslens-tier-text.score-med {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.score-high { color: #f87171; }
+.score-high-bg {
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+.biaslens-tier-text.score-high {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Primary Violation Banner */
+.biaslens-violation-card {
+  background: rgba(30, 41, 59, 0.55);
+  border-left: 3px solid #6366f1;
+  padding: 8px 12px;
+  border-radius: 4px 8px 8px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.biaslens-violation-label {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.biaslens-violation-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  white-space: nowrap;
+}
+
+.biaslens-violation-tag.violation-none {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.biaslens-violation-tag.violation-flagged {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* Explanation */
+.biaslens-explanation {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #e2e8f0;
+  background: rgba(15, 23, 42, 0.65);
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+/* Flagged Phrases */
+.biaslens-flagged-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.biaslens-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.biaslens-phrases-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.biaslens-phrase-chip {
+  font-size: 11px;
+  background: rgba(239, 68, 68, 0.14);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: default;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.biaslens-phrase-chip:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+/* Context Accordion & Scrollable Metadata Drawer */
+.biaslens-context-details {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 11px;
+  flex-shrink: 0; /* Prevents flex compression */
+}
+
+.biaslens-context-summary {
+  padding: 7px 10px;
+  cursor: pointer;
+  color: #94a3b8;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  user-select: none;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.biaslens-context-summary:hover {
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.biaslens-context-summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Strict Max-Height, Padding, and Scoped Scrollbar for Metadata Drawer */
+.biaslens-context-body {
+  padding: 8px 10px 16px 10px !important; /* Bottom padding ensures last line is not cut off */
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #cbd5e1;
+  max-height: 140px !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  box-sizing: border-box !important;
+}
+
+/* Sleek Dark-Mode Scrollbar for Metadata Drawer */
+.biaslens-context-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.biaslens-context-body::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 4px;
+}
+
+.biaslens-context-body::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.4);
+  border-radius: 4px;
+}
+
+.biaslens-context-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.7);
+}
+
+.biaslens-context-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.biaslens-context-key {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.biaslens-context-val {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Error State */
+.biaslens-error-box {
+  padding: 14px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.biaslens-error-title {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Keyframes */
+@keyframes biaslens-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.93) translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes biaslens-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes biaslens-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes biaslens-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
