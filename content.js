@@ -634,7 +634,7 @@
    */
   function isExtensionContextValid() {
     try {
-      return typeof chrome !== 'undefined' && Boolean(chrome.runtime?.id) && Boolean(chrome.storage?.local);
+      return typeof chrome !== 'undefined' && Boolean(chrome.runtime?.id);
     } catch {
       return false;
     }
@@ -653,17 +653,22 @@
   }
 
   /**
-   * Safe message dispatcher with invalidation guard
+   * Safe message dispatcher with extension context invalidation guard
    */
   async function sendRuntimeMessage(message) {
     if (!isExtensionContextValid()) {
-      throw new Error('Extension context was refreshed. Please reload the webpage.');
+      throw new Error('BiasLens was recently updated or reloaded. Please refresh this webpage (Cmd+Shift+R or Ctrl+Shift+R) to reconnect.');
     }
     try {
       return await chrome.runtime.sendMessage(message);
     } catch (err) {
-      if (err?.message?.includes('Extension context invalidated') || err?.message?.includes('message port closed')) {
-        throw new Error('Extension was updated. Please reload the webpage.');
+      if (
+        !isExtensionContextValid() ||
+        err?.message?.includes('Extension context invalidated') ||
+        err?.message?.includes('message port closed') ||
+        err?.message?.includes('Receiving end does not exist')
+      ) {
+        throw new Error('BiasLens was recently updated or reloaded. Please refresh this webpage (Cmd+Shift+R or Ctrl+Shift+R) to reconnect.');
       }
       throw err;
     }
@@ -1535,7 +1540,7 @@
             <div class="biaslens-error-title">Error Details</div>
             <div>${escapeHtml(errorMessage)}</div>
             <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">
-              Tip: Check your API Key in the extension popup or enable Demo Mode for offline testing.
+              Tip: Refresh the webpage or try again in a few moments.
             </div>
           </div>
         </div>

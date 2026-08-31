@@ -65,7 +65,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 /**
- * Main analysis handler routing to PROXY_URL with 25-second timeout and timing diagnostics
+ * Main analysis handler routing to PROXY_URL with security handshake and status code handling
  * @param {Object} payload Context extracted from webpage
  */
 async function handleBiasAnalysis(payload) {
@@ -86,7 +86,8 @@ async function handleBiasAnalysis(payload) {
     response = await fetch(PROXY_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-BiasLens-Source': 'biaslens-v1'
       },
       body: JSON.stringify({
         selectedText: selectedText.trim(),
@@ -112,7 +113,18 @@ async function handleBiasAnalysis(payload) {
     console.log('[BiasLens Background] Model used by proxy:', modelUsed);
   }
 
+  // Handle HTTP status codes according to API contract
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Proxy authentication failed: invalid client handshake.');
+    }
+    if (response.status === 429) {
+      throw new Error('Rate limit reached (20 requests/min). Please wait a minute before analysing more text.');
+    }
+    if (response.status === 502 || response.status === 503) {
+      throw new Error('Upstream analysis service temporarily busy. Please try again in a few seconds.');
+    }
+
     const errorBody = await response.text();
     let parsedMsg = errorBody;
     try {
@@ -121,6 +133,11 @@ async function handleBiasAnalysis(payload) {
     } catch {
       // retain raw text
     }
+
+    if (response.status === 400) {
+      throw new Error(parsedMsg || 'Bad request sent to analysis proxy.');
+    }
+
     throw new Error(`Proxy Error (${response.status}): ${parsedMsg}`);
   }
 
